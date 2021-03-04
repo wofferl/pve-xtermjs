@@ -35,6 +35,14 @@ $(SUBDIRS):
 cargo-build:
 	cargo build $(CARGO_BUILD_ARGS)
 
+.PHONY: cargo-vendor
+cargo-vendor:
+	cargo vendor
+	rm -f vendor/endian_trait/rust-toolchain
+	rm -f vendor/endian_trait_derive/rust-toolchain
+	sed -i "s#\"rust-toolchain[^,]\+,##"  vendor/endian_trait/.cargo-checksum.json
+	sed -i "s#\"rust-toolchain[^,]\+,##"  vendor/endian_trait_derive/.cargo-checksum.json
+
 .PHONY: build
 build:
 	rm -rf build
@@ -53,9 +61,10 @@ build:
 
 .PHONY: deb
 deb: ${DEB}
-$(DEB): build
-	cd build; dpkg-buildpackage -b -uc -us --no-pre-clean
-	lintian ${DEB}
+$(DEB): cargo-vendor
+	echo "git clone git://git.proxmox.com/git/pve-xtermjs.git\\ngit checkout ${GITVERSION}" > debian/SOURCE
+	DEB_CARGO_PACKAGE=$(PACKAGE) dpkg-buildpackage -b -uc -us --no-pre-clean
+	lintian ../${DEB}
 	@echo ${DEB}
 
 .PHONY: dsc

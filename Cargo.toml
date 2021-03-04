@@ -1,5 +1,5 @@
 [package]
-name = "termproxy"
+name = "pve-xtermjs"
 version = "4.7.0"
 authors = [
     "Dominik Csapak <d.csapak@proxmox.com>",
@@ -14,4 +14,5 @@ exclude = [ "build", "debian" ]
 mio = { version = "0.7", features = [ "net", "os-ext" ] }
 curl = "0.4"
 clap = "2.33"
-proxmox = { version = "0.10.0", default-features = false }
+#proxmox = { version = "0.10.0", default-features = false }
+proxmox = { path = "../proxmox/proxmox", default-features = false }
